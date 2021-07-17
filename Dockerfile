@@ -17,7 +17,7 @@ FROM node as provider-ui
 ADD provider-ui provider-ui
 RUN cd provider-ui; npm install --only=production; npm run build && npm run export; mv out /
 
-FROM ubuntu as wrk2
+FROM ubuntu:20.10 as wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
@@ -32,7 +32,7 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-FROM ubuntu
+FROM ubuntu:20.10
 RUN apt-get update; apt-get install -y ca-certificates curl; update-ca-certificates
 COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
